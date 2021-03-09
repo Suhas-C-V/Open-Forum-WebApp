@@ -1,0 +1,28 @@
+{
+  "name": "openforumproject",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node app.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Suhas-C-V/OpenForumProject.git"
+  },
+  "author": "Suhas C V, Akhila, Rohith",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Suhas-C-V/OpenForumProject/issues"
+  },
+  "homepage": "https://github.com/Suhas-C-V/OpenForumProject#readme",
+  "dependencies": {
+    "cookie-session": "^1.4.0",
+    "ejs": "^3.1.6",
+    "express": "^4.17.1",
+    "mysql": "^2.18.1",
+    "passport": "^0.4.1",
+    "passport-google-oauth20": "^2.0.0"
+  }
+}

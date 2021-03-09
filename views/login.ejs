@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login</title>
+</head>
+<body>
+  <ul>
+      <% if(user) {%>
+      <li><a href="/auth/logout">Logout</a></li>
+      <% } else {%>
+      <li><a href="/auth/login">Login</a></li>
+      <%}%>
+      <li><a href="/">HomePage</a></li>
+      <li><a href="/profile">Profile</a></li>
+  </ul>
+  <h1>login page</h1>
+  <a href="/auth/google">Google+</a>
+</body>
+</html>
