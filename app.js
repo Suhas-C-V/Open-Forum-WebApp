@@ -1,11 +1,16 @@
 const express = require('express');
 const authRoutes = require('./routes/auth-routes');
 const profileRoutes = require('./routes/profile-routes');
+const postRoutes = require('./routes/posts');
+//const commentRoutes = require('./routes/comments');
 const passportSetup = require('./config/passport-setup');
 const keys = require('./config/keys');
 const mysql = require('mysql');
 const cookieSession = require('cookie-session');
 const passport = require('passport');
+const bodyParser = require('body-parser');
+const flash = require('connect-flash');
+const methodOverride = require('method-override');
 const app = express();
 
 //database connection
@@ -34,7 +39,12 @@ handleDisconnect();
 
 
 //set up view engine
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
 app.set('view engine','ejs');
+app.use(express.static(__dirname + '/public'));
+app.use(methodOverride('_method'));
+app.use(flash());
 
 app.use(cookieSession({
     maxAge: 24*60*60*1000,
@@ -44,13 +54,23 @@ app.use(cookieSession({
 //initialize passport
 app.use(passport.initialize());
 app.use(passport.session());
+
+app.use(function(req, res, next) {
+	res.locals.currentUser = req.user;
+	res.locals.error = req.flash('error');
+	res.locals.success = req.flash('success');
+	next();
+});
+
 //routes
 app.use('/auth',authRoutes);
 app.use('/profile',profileRoutes);
+app.use('/posts', postRoutes);
+//app.use('/posts/:id/comments', commentRoutes);
 
 //create home route
 app.get('/',(req,res)=>{
-  res.render('home',{user:req.user});
+  res.redirect('/posts');
 });
 
 app.listen(5000,()=>{

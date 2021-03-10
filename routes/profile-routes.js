@@ -1,14 +1,7 @@
 const router = require('express').Router();
+var middleware = require('../middleware');
 
-const isLoggedin = (req,res,next)=>{
-    if(!req.user){
-        res.redirect('/auth/login');
-    }else{
-      next();
-    }
-};
-
-router.get('/',isLoggedin,(req,res)=>{
+router.get('/',middleware.isLoggedIn,(req,res)=>{
     res.render('profile',{user: req.user});
 });
 
