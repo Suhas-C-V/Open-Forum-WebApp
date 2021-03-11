@@ -12,7 +12,7 @@ passport.deserializeUser((id,done)=>{
   db.query(sql,(err,result)=>{
     if(err) throw err;
     let User = JSON.parse(JSON.stringify(result[0]));
-    console.log(User);
+    //console.log(User);
     done(null, User);
   });
 });
@@ -26,7 +26,8 @@ passport.use(
     callbackURL: '/auth/google/redirect',
     //passReqToCallback:true
   },(accessToken, refreshToken, profile, done)=>{
-      console.log(profile);
+      // console.log(accessToken);
+      // console.log(refreshToken);
       let user = { google_id:profile.id, name:profile.displayName , email:profile.emails[0].value , tumbnail: profile._json.picture};
       //console.log(user);
       let sql1 = `SELECT * from users WHERE google_id = ${user.google_id}`;
@@ -37,20 +38,17 @@ passport.use(
           let sql = 'INSERT INTO users SET ?';
           db.query(sql, user, (error,result)=>{
                 if (error) throw error;
-                console.log(result);
-                console.log(user.google_id);
+                //console.log(user.google_id);
                 let sql2 = `SELECT * from users WHERE google_id = ${user.google_id}`;
                 db.query(sql2,(errsql2,ressql2)=>{
                   if (errsql2) throw errsql2;
-                  console.log(ressql2[0])
                   var newUser = JSON.parse(JSON.stringify(ressql2[0]));
-                  console.log(newUser);
                   done(null, newUser);
                 });
             });
         } else {
             let currentUser = JSON.parse(JSON.stringify(results[0]));
-            console.log(currentUser);
+            //console.log(currentUser);
             done(null, currentUser);
         }
       });
