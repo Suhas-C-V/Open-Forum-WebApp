@@ -17,12 +17,13 @@ passport.deserializeUser((id,done)=>{
   });
 });
 
-
+var clientID = process.env.CLIENT_ID || keys.google.clientID;
+var clientSecret = process.env.CLIENT_SECRET || keys.google.clientSecret;
 
 passport.use(
   new GoogleStrategy({
-    clientID: keys.google.clientID,
-    clientSecret: keys.google.clientSecret,
+    clientID: clientID,
+    clientSecret: clientSecret,
     callbackURL: '/auth/google/redirect',
     //passReqToCallback:true
   },(accessToken, refreshToken, profile, done)=>{

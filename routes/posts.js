@@ -8,7 +8,10 @@ router.get('/', (req, res) => {
 	// Get all posts from DB
 	let sql = 'SELECT * FROM posts';
   db.query(sql, (err,posts)=>{
-      if(err) throw err;
+      if(err){
+				res.status(500).json(err);
+				throw err;
+			}
       var data = JSON.parse(JSON.stringify(posts));
       res.json(data);
   });

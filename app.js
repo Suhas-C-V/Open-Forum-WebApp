@@ -14,11 +14,24 @@ const methodOverride = require('method-override');
 const fileUpload = require('express-fileupload')
 const app = express();
 
+let port = process.env.PORT || 5000;
+let host = process.env.HOST || keys.db_config.host;
+let user = process.env.USER || keys.db_config.user;
+let password = process.env.PASSWORD || keys.db_config.password;
 //database connection
 var connection;
 
+//let dbconfig = process.env.DB_CONFIG || keys.db_config;
+
 function handleDisconnect() {
-  connection = mysql.createConnection(keys.db_config); 
+  connection = mysql.createConnection({
+    host: host,
+    user: user,
+    password: password,
+    database:'openforum',
+    port:'3306',
+    timezone:"Asia/kolkata"
+  }); 
 
   connection.connect(function(err) {              
     if(err) {                                     
@@ -49,9 +62,11 @@ app.use(methodOverride('_method'));
 app.use(flash());
 app.use(fileUpload());
 
+const cookieKey = process.env.SECRET || keys.session.cookieKey;
+
 app.use(cookieSession({
     maxAge: 24*60*60*1000,
-    keys: [keys.session.cookieKey]
+    keys: [cookieKey]
 }));
 
 //initialize passport
@@ -75,6 +90,6 @@ app.get('/',(req,res)=>{
   res.redirect('/posts');
 });
 
-app.listen(5000,()=>{
-  console.log('App started');
+app.listen(port,()=>{
+  console.log(`App started and listenig in port ${port}`);
 });
