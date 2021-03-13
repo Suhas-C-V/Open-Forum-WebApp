@@ -19,51 +19,46 @@ router.get('/', (req, res) => {
 
 //CREATE - add new post
 router.post('/', (req, res) => {
-	var newPost = req.body;
-	//Create a new Post and save to DB
-  let sql = "INSERT INTO posts SET ?"
-  db.query(sql, newPost, (err,data)=>{
-      if(err){
-				res.status(500).json(err);
-				throw err;
+	if(req.method == "POST"){
+		 //var user_id = req.user.user_id;
+		 var user_id = parseInt(req.body.user_id);
+		 var post  = req.body;
+		 var title= post.title;
+		 var overview= post.overview;
+		 var body= post.body;
+		 var votes= parseInt(post.votes);
+		 if (!req.files)
+				return res.status(400).json({err:"Bad Request!!",message:'No files were uploaded.'});
+
+				var file = req.files.image;
+				var img_name=file.name;
+				
+				if(file.mimetype == "image/jpeg" ||file.mimetype == "image/png"||file.mimetype == "image/gif" )
+				  {
+						if(file.size < 1572864 ){
+							var newPost = {user_id:user_id,title:title,overview:overview,body:body,image:img_name,votes:votes}                    
+							file.mv('public/images/uploads/'+file.name, (err) => {			 
+								if (err) return res.status(500).json(err);
+								var sql = "INSERT INTO posts SET ?";
+							var newPost = {user_id:user_id,title:title,overview:overview,body:body,image:img_name,votes:votes}                    
+							db.query(sql, newPost, (error, result)=> {
+									if(error){
+										res.status(500).json(err);
+										throw error;
+									}
+									 res.status(201).json({message:"Post Added"})
+								});
+						 });
+						}else{
+							message = "File should be less than 1.5MB!!";
+							res.status(400).json({err:"Bad Request!!",message:message,});
+						}
+			} else {
+				message = "This format is not allowed , please upload file with '.png','.gif','.jpg'";
+				//res.render('/posts/new',{message: message});
+				res.status(400).json({err:"Bad Request!!",message:message,});
 			}
-			res.status(201).json({message:`Post created`})
-		});	
-			//res.redirect('/posts');
-
-	// let message = '';
-	// if(req.method == "POST"){
-	// 	 var user_id = req.user.user_id;
-	// 	 var post  = req.body;
-	// 	 var title= post.title;
-	// 	 var overview= post.overview;
-	// 	 var body= post.body;
-	// 	 var votes= post.votes;
-
-	// 	 if (!req.files)
-	// 			return res.status(400).send('No files were uploaded.');
-
-	// 			var file = req.files.image;
-	// 			var img_name=file.name;
-
-	// 			if(file.mimetype == "image/jpeg" ||file.mimetype == "image/png"||file.mimetype == "image/gif" ){
-                                 
-	// 				file.mv('public/images/uploads/'+file.name, (err) => {			 
-	// 					if (err) return res.status(500).send(err);
-	// 					var sql = "INSERT INTO `posts`(`user_id`,`title`,`overview`,`body`, `image`,`votes`) VALUES ('" + user_id + "','" + title + "','" + overview + "','" + body + "','" + img_name + "','" + votes + "')";
-
-	// 					db.query(sql, (error, result)=> {
-	// 						if(error) throw error;
-	// 						 res.redirect('/posts');
-	// 					});
-	// 			 });
-	// 		} else {
-	// 			message = "This format is not allowed , please upload file with '.png','.gif','.jpg'";
-	// 			res.render('/posts/new',{message: message});
-	// 		}
-	// } else{
-	// 	res.render('/posts/new',{message: message});
-	// }
+	}
 });
 
 //NEW - show form to create new post
