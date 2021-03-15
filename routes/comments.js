@@ -2,9 +2,10 @@ const express = require('express');
 const router = express.Router({ mergeParams: true });
 const { json } = require('body-parser');
 const db = require('../config/db');
+const middleware = require('../middleware');
 
 //new comment page form
-router.get('/new',(req,res)=>{
+router.get('/new',middleware.isLoggedIn,(req,res)=>{
     let id = req.params.id;
     let sql = `SELECT * FROM posts WHERE post_id = ${id}`;
     db.query(sql,(err,data)=>{
@@ -18,7 +19,7 @@ router.get('/new',(req,res)=>{
 });
 
 //POST - add comment
-router.post('/',(req,res)=>{
+router.post('/', middleware.isLoggedIn, (req,res)=>{
     let post_id = parseInt(req.params.id);
     db.query(`SELECT * FROM posts WHERE post_id=${post_id}`,(err,data)=>{
         let post = JSON.parse(JSON.stringify(data));
@@ -26,9 +27,9 @@ router.post('/',(req,res)=>{
           res.status(500).send(err);
           throw err;
         }else if(post.length === 0 ){
-          res.status(404).send({"message":"Post Not Found!!"})
+          res.status(404).send({"message":"Post Not Found!!"});
         }else{
-          let user_id = req.body.user_id;
+          let user_id = req.session.user_id;
           let title = req.body.title;
           let body = req.body.body;
           let votes = req.body.votes;
@@ -47,7 +48,7 @@ router.post('/',(req,res)=>{
 });
 
 //EDIT comment form
-router.get('/:comment_id/edit',(req,res)=>{
+router.get('/:comment_id/edit',middleware.checkCommentOwner,(req,res)=>{
   let post_id = parseInt(req.params.id);
   db.query(`SELECT * FROM posts WHERE post_id=${post_id}`,(err,data)=>{
       let post = JSON.parse(JSON.stringify(data));
@@ -74,8 +75,8 @@ router.get('/:comment_id/edit',(req,res)=>{
 });
 
 //PUT - UPDATE comment
-router.put('/:comment_id',(req,res)=>{
-    let comment = req.body.comment;
+router.put('/:comment_id',middleware.checkCommentOwner,(req,res)=>{
+    let comment = req.body;
     let id = req.params.comment_id;
     console.log(comment);
     console.log(id);
@@ -91,17 +92,27 @@ router.put('/:comment_id',(req,res)=>{
 });
 
 //DELETE - delete comment
-router.delete('/:comment_id',(req,res)=>{
+router.delete('/:comment_id',middleware.checkCommentOwner,(req,res)=>{
     let id = req.params.comment_id;
-    let sql = `DELETE FROM comments WHERE com_id=${id}`;
+    let sql = `SELECT * FROM comments WHERE com_id=${id}`;
     db.query(sql,(err,data)=>{
-        if(err){
-          res.status(500).send(err);
-          throw err;
-        }else{
-          res.status(410);
-          res.json({"message": "Comment Deleted"});
-        }
+      let comment = JSON.parse(JSON.stringify(data));
+      if(err){
+        res.status(500).send(err);
+        throw err;
+      }else if(comment.length ===0 ){
+        res.status(404).send({"message":"Comment Not Found!!"})
+      }else{
+        db.query(`DELETE FROM comments WHERE com_id=${id}`,(err,data)=>{
+          if(err){
+            res.status(500).send(err);
+            throw err;
+          }else{
+            res.status(410);
+            res.json({"message": "Comment Deleted"});
+          }
+      });
+      }
     });
 });
 

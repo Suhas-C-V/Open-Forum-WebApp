@@ -1,6 +1,8 @@
 const mysql = require('mysql');
-//const keys = require('./keys');
-
+var keys;
+if(process.env.NODE_ENV === 'development'){
+  keys = require('./keys');
+}
 let host = process.env.HOST || keys.db_config.host;
 let user = process.env.USER || keys.db_config.user;
 let password = process.env.PASSWORD || keys.db_config.password;
