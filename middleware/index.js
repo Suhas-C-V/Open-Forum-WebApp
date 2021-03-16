@@ -24,7 +24,7 @@ middlewareObj.checkPostOwner = function(req,res,next){
         }else if(post.length === 0){
           res.status(404).send({"message":"Post Not Found!!"});
         } else {
-            if(post.user_id === req.session.user_id ){
+            if(post[0].user_id === req.session.user_id){
                 next();
             }else{
                res.status(403).json({"err":"Forbidden","message":"User does not have access rights to the content"})
@@ -49,7 +49,7 @@ middlewareObj.checkCommentOwner = function(req,res,next){
         }else if(comment.length === 0){
           res.status(404).send({"message":"Comment Not Found!!"});
         } else {
-            if(comment.user_id === req.session.user_id ){
+            if(comment[0].user_id === req.session.user_id){
                 next();
             }else{
                res.status(403).json({"err":"Forbidden","message":"User does not have access rights to the content"})
