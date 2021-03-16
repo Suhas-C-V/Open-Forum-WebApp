@@ -28,7 +28,7 @@ router.post('/', middleware.isLoggedIn, (req, res) => {
 		 var title= post.title;
 		 var overview= post.overview;
 		 var body= post.body;
-		 var votes= parseInt(post.votes);
+		 //var votes= parseInt(post.votes);
 		 if (!req.files)
 				return res.status(400).json({err:"Bad Request!!",message:'No files were uploaded.'});
 
@@ -38,7 +38,7 @@ router.post('/', middleware.isLoggedIn, (req, res) => {
 				if(file.mimetype == "image/jpeg" ||file.mimetype == "image/png"||file.mimetype == "image/gif" )
 				  {
 						if(file.size < 1572864 ){
-							var newPost = {user_id:user_id,title:title,overview:overview,body:body,image:img_name,votes:votes}                    
+							var newPost = {user_id:user_id,title:title,overview:overview,body:body,image:img_name,votes:0};                  
 							file.mv('public/images/uploads/'+file.name, (err) => {			 
 								if (err) return res.status(500).json(err);
 								var sql = "INSERT INTO posts SET ?";                  

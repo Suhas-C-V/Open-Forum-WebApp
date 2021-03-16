@@ -58,19 +58,6 @@ handleDisconnect();
 
 
 //set up view engine
-app.use(cors({
-  origin: function (origin, callback) {
-    // allow requests with no origin 
-    if (!origin) return callback(null, true);
-    if (whitelist.indexOf(origin) === -1) {
-      var message = 'The CORS policy for this origin doesn ' +
-        'allow access from the particular origin.';
-      return callback(new Error(message), false);
-    }
-    return callback(null, true);
-  }
-}));
-
 app.use(express.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.set('views', __dirname + '/views');
@@ -89,13 +76,19 @@ app.use(session({
     }
 }));
 
-//initialize passport
-// app.use(passport.initialize());
-// app.use(passport.session());
-
 app.use(function(req, res, next) {
 	res.locals.currentUser = req.session.user_id;
 	next();
+});
+
+app.use((req,res,next)=>{
+    res.header("Access-Control-Allow-Origin","*");
+    res.header("Access-Control-Allow-Headers","Origin, X-Requested-With, Content-Type, Accept, Authorization");
+    if(req.method === 'OPTIONS'){
+      res.header("Access-Control-Allow-Methods","PUT, POST, PATCH, DELETE, GET");
+      //return res.status(200).json({});
+    }
+    next();
 });
 
 //routes
