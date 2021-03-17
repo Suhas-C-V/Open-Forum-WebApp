@@ -29,7 +29,7 @@ router.post('/', (req,res)=>{
         }else if(post.length === 0 ){
           res.status(404).send({"message":"Post Not Found!!"});
         }else{
-          let user_id = req.session.user_id;
+          let user_id = req.body.user_id;
           let title = req.body.title;
           let body = req.body.body;
           let votes = req.body.votes;

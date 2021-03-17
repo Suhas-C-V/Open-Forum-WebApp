@@ -23,7 +23,7 @@ router.post('/', (req, res) => {
 	if(req.method == "POST"){
 		 //var user_id = req.user.user_id;
 		 //var user_id = parseInt(req.body.user_id);
-		 var user_id = req.session.user_id;
+		 var user_id = req.body.user_id;
 		 var post  = req.body;
 		 var title= post.title;
 		 var overview= post.overview;

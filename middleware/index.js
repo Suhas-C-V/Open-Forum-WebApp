@@ -13,7 +13,7 @@ middlewareObj.isLoggedIn = function(req, res, next) {
 
 middlewareObj.checkPostOwner = function(req,res,next){
   console.log(req.session.user_id);
-  if(req.session.user_id !== undefined){
+  if(req.body.user_id !== undefined){
     let id = req.params.id;
     let sql = `SELECT * FROM posts WHERE post_id=${id}`;
     db.query(sql,(err,data)=>{
@@ -24,7 +24,7 @@ middlewareObj.checkPostOwner = function(req,res,next){
         }else if(post.length === 0){
           res.status(404).send({"message":"Post Not Found!!"});
         } else {
-            if(post[0].user_id === req.session.user_id){
+            if(post[0].user_id === req.body.user_id){
                 next();
             }else{
                res.status(403).json({"err":"Forbidden","message":"User does not have access rights to the content"})
