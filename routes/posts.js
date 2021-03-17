@@ -66,9 +66,9 @@ router.get('/new', middleware.isLoggedIn, (req, res) => {
 });
 
 // SHOW - shows more info about one post
-router.get('/:id', (req, res) => {
+router.get('/:id/:user_id', (req, res) => {
 		let id = req.params.id;
-		let user_id = req.body.user_id;
+		let user_id = req.params.user_id;
 		let result = {};
 		let sql = `SELECT p.post_id,p.title,p.overview,p.body,p.image,p.votes,p.created,u.name FROM posts p,users u WHERE p.user_id = u.user_id and post_id = ${id}`;
 		db.query(sql,(err,post)=>{
