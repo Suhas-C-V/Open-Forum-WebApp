@@ -24,10 +24,10 @@ router.post('/', (req, res) => {
 		 //var user_id = req.user.user_id;
 		 //var user_id = parseInt(req.body.user_id);
 		 var user_id = parseInt(req.body.user_id);
-		 var post  = req.body;
-		 var title= post.title;
-		 var overview= post.overview;
-		 var body= post.body;
+		 console.log(req.body);
+		 var title= req.body.title;
+		 var overview= req.body.overview;
+		 var body= req.body.body;
 		 //var votes= parseInt(post.votes);
 		 if (!req.files)
 				return res.status(400).json({err:"Bad Request!!",message:'No files were uploaded.'});
@@ -47,7 +47,7 @@ router.post('/', (req, res) => {
 										res.status(500).json(err);
 										throw error;
 									}
-									 res.status(201).json({message:"Post Added"})
+									 res.status(201).json({message:"Post Added"});
 								});
 						 });
 						}else{
