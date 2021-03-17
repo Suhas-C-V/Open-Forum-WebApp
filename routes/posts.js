@@ -47,7 +47,7 @@ router.post('/', (req, res) => {
 										res.status(500).json(err);
 										throw error;
 									}
-									 res.status(201).json({message:"Post Added"});
+									res.status(201).json({message:"Post added!"});
 								});
 						 });
 						}else{
@@ -58,11 +58,6 @@ router.post('/', (req, res) => {
 				res.status(400).json({err:"Bad Request!!",message:"This format is not allowed , please upload file with '.png','.gif','.jpg"});
 			}
 	}
-});
-
-//NEW - show form to create new post
-router.get('/new', middleware.isLoggedIn, (req, res) => {
-	res.render('posts/new',{message: ''});
 });
 
 // SHOW - shows more info about one post
@@ -89,7 +84,7 @@ router.get('/:id/:user_id', (req, res) => {
 							}
 						});
 					}
-					let sql = `SELECT c.com_id,c.title,c.body,c.votes,c.created,u.name FROM posts p,comments c,users u WHERE c.user_id = u.user_id and c.post_id = p.post_id and c.post_id = ${id}`;
+					let sql = `SELECT c.com_id,c.body,c.votes,c.created,u.name FROM posts p,comments c,users u WHERE c.user_id = u.user_id and c.post_id = p.post_id and c.post_id = ${id}`;
 					db.query(sql,(err,comments)=>{
 							if(err){
 								res.status(500).json(err);
@@ -100,7 +95,6 @@ router.get('/:id/:user_id', (req, res) => {
 							res.json(result);
 					});
 				}
-				//res.render('posts/show',{data:data})
 		});
 });
 

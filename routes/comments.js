@@ -30,10 +30,8 @@ router.post('/', (req,res)=>{
           res.status(404).send({"message":"Post Not Found!!"});
         }else{
           let user_id = parseInt(req.body.user_id);
-          let title = req.body.title;
           let body = req.body.body;
-          let votes = req.body.votes;
-          var newComment = {post_id:post_id, user_id:user_id, title:title, body:body, votes:votes};
+          var newComment = {post_id:post_id, user_id:user_id, body:body, votes:0};
           let sql = "INSERT INTO comments SET ?";
           db.query(sql,newComment,(err,data)=>{
               if(err){
