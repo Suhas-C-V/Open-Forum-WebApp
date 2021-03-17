@@ -79,7 +79,7 @@ router.get('/:id', (req, res) => {
 					res.status(404).json({message:"Post not Found!"});
 				}else{
 					result.post = post[0];
-					if(req.session.user_id !== undefined){
+					if(user_id !== undefined){
 					db.query(`SELECT * FROM post_votes WHERE user_id = ${user_id} and post_id=${id}`,(err,data)=>{
 							if(err) throw err;
 							else if(data.length === 0){
