@@ -5,7 +5,7 @@ const authRoutes = require('./routes/auth-routes');
 const profileRoutes = require('./routes/profile-routes');
 const postRoutes = require('./routes/posts');
 const commentRoutes = require('./routes/comments');
-
+const voteRoutes = require('./routes/votes');
 var keys;
 if(process.env.NODE_ENV === 'development'){
   keys = require('./config/keys');
@@ -94,6 +94,7 @@ app.use((req,res,next)=>{
 //routes
 app.use('/auth',authRoutes);
 app.use('/profile',profileRoutes);
+app.use('/votes', voteRoutes);
 app.use('/posts', postRoutes);
 app.use('/posts/:id/comments', commentRoutes);
 

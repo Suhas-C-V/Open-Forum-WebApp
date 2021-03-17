@@ -68,6 +68,7 @@ router.get('/new', middleware.isLoggedIn, (req, res) => {
 // SHOW - shows more info about one post
 router.get('/:id', (req, res) => {
 		let id = req.params.id;
+		let user_id = req.body.user_id;
 		let result = {};
 		let sql = `SELECT p.post_id,p.title,p.overview,p.body,p.image,p.votes,p.created,u.name FROM posts p,users u WHERE p.user_id = u.user_id and post_id = ${id}`;
 		db.query(sql,(err,post)=>{
@@ -78,6 +79,16 @@ router.get('/:id', (req, res) => {
 					res.status(404).json({message:"Post not Found!"});
 				}else{
 					result.post = post[0];
+					if(req.session.user_id !== undefined){
+					db.query(`SELECT * FROM post_votes WHERE user_id = ${user_id} and post_id=${id}`,(err,data)=>{
+							if(err) throw err;
+							else if(data.length === 0){
+								result.post.voted = false;
+							}else{
+								result.post.voted = true;
+							}
+						});
+					}
 					let sql = `SELECT c.com_id,c.title,c.body,c.votes,c.created,u.name FROM posts p,comments c,users u WHERE c.user_id = u.user_id and c.post_id = p.post_id and c.post_id = ${id}`;
 					db.query(sql,(err,comments)=>{
 							if(err){
