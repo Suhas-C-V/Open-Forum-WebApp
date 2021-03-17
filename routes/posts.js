@@ -19,7 +19,7 @@ router.get('/', (req, res) => {
 });
 
 //CREATE - add new post
-router.post('/', middleware.isLoggedIn, (req, res) => {
+router.post('/', (req, res) => {
 	if(req.method == "POST"){
 		 //var user_id = req.user.user_id;
 		 //var user_id = parseInt(req.body.user_id);

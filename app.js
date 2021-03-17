@@ -65,10 +65,10 @@ app.set('view engine','ejs');
 app.use(express.static(__dirname + '/public'));
 app.use(fileUpload());
 
-const cookieKey = process.env.SECRET || keys.session.cookieKey;
+const secrectkey = process.env.SECRET || keys.session.cookieKey;
 
 app.use(session({
-    secret: 'keyboard cat',
+    secret: secrectkey,
     resave: true,
     saveUninitialized: true,
     cookie:{

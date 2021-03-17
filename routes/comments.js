@@ -5,7 +5,7 @@ const db = require('../config/db');
 const middleware = require('../middleware');
 
 //new comment page form
-router.get('/new',middleware.isLoggedIn,(req,res)=>{
+router.get('/new',(req,res)=>{
     let id = req.params.id;
     let sql = `SELECT * FROM posts WHERE post_id = ${id}`;
     db.query(sql,(err,data)=>{
@@ -19,7 +19,7 @@ router.get('/new',middleware.isLoggedIn,(req,res)=>{
 });
 
 //POST - add comment
-router.post('/', middleware.isLoggedIn, (req,res)=>{
+router.post('/', (req,res)=>{
     let post_id = parseInt(req.params.id);
     db.query(`SELECT * FROM posts WHERE post_id=${post_id}`,(err,data)=>{
         let post = JSON.parse(JSON.stringify(data));
