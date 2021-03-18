@@ -9,7 +9,7 @@ router.get('/',middleware.isLoggedIn,(req,res)=>{
 });
 
 router.get('/lead',(req,res)=>{
-    let sql = 'SELECT u.name,u.email,us.total_posts,us.total_comments FROM users u,user_scores us WHERE u.user_id = us.user_id ORDER BY Points DESC';
+    let sql = 'SELECT u.name,u.email,us.total_posts,us.total_comments FROM users u,user_scores us WHERE u.user_id = us.user_id';
     db.query(sql,(err,data)=>{
         if(err){
             res.status(500).json(err);
