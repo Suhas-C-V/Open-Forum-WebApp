@@ -19,7 +19,7 @@ const bodyParser = require('body-parser');
 const fileUpload = require('express-fileupload')
 const app = express();
 
-let port = process.env.PORT || 4000;
+let port = process.env.PORT || 5000;
 let host = process.env.HOST || keys.db_config.host;
 let user = process.env.USER || keys.db_config.user;
 let password = process.env.PASSWORD || keys.db_config.password;

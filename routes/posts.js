@@ -7,7 +7,7 @@ const middleware = require('../middleware');
 //INDEX - show all posts
 router.get('/', (req, res) => {
 	// Get all posts from DB
-	let sql = 'SELECT p.*,u.name FROM posts p,users u WHERE u.user_id = p.user_id ORDER BY created DESC';
+	let sql = 'SELECT p.*,u.name FROM posts p,users u WHERE u.user_id = p.user_id ORDER BY p.votes DESC';
   db.query(sql, (err,posts)=>{
       if(err){
 				res.status(500).json(err);
