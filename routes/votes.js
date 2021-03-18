@@ -15,15 +15,17 @@ router.post('/posts',(req,res)=>{
             res.status(500).json(err);
             throw err;
           }else{
-            db.query(`SELECT * FROM post_votes WHERE vote_id = ${data.insertId}`,(err,data)=>{
+            db.query(`SELECT pv.user_id,pv.post_id,p.votes FROM post_votes pv,posts p WHERE pv.post_id = p.post_id and vote_id = ${data.insertId}`,(err,data)=>{
                 if(err) throw err;
                 res.status(201).json(data[0]);
             });
           }
       });
       } else {
-        res.json(data[0]);
-        //res.redirect('/posts/show/'+post_id);
+        db.query(`SELECT pv.user_id,pv.post_id,p.votes FROM post_votes pv,posts p WHERE pv.post_id = p.post_id and pv.post_id = ${post_id}`,(err,data)=>{
+          if(err) throw err;
+          res.status(201).json(data[0]);
+      });
       }  
   });
 });

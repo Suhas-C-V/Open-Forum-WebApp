@@ -33,13 +33,15 @@ router.post('/', (req,res)=>{
           let body = req.body.body;
           var newComment = {post_id:post_id, user_id:user_id, body:body, votes:0};
           let sql = "INSERT INTO comments SET ?";
-          db.query(sql,newComment,(err,data)=>{
+          db.query(sql,newComment,(err,data1)=>{
               if(err){
                 res.status(500).send(err);
                 throw err;
               }
-              res.status(201);
-              res.json({"message": "Comment added"});
+              db.query(`SELECT * FROM comments WHERE com_id = ${data1.insertId}`,(err,data2)=>{
+                    if(err) throw err;
+                    res.status(201).json(data2[0]);
+              });
           });
         }
     });  
