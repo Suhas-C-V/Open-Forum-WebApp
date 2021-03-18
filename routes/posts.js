@@ -51,7 +51,7 @@ router.post('/', (req, res) => {
 								});
 						 });
 						}else{
-							res.status(400).json({err:"Bad Request!!",message:"File should be less than 1.5MB!!",});
+							res.status(400).json({err:"Bad Request!!",message:"File should be less than 1.5MB!!"});
 						}
 			} else {
 				//res.render('/posts/new',{message: message});
