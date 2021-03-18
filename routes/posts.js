@@ -93,7 +93,7 @@ router.get('/:id/:user_id', (req, res) => {
 							}
 						});
 					}
-					let sql = `SELECT c.com_id,c.body,c.votes,c.created,u.name FROM posts p,comments c,users u WHERE c.user_id = u.user_id and c.post_id = p.post_id and c.post_id = ${id}`;
+					let sql = `SELECT c.com_id,c.body,c.votes,c.created,u.name FROM posts p,comments c,users u WHERE c.user_id = u.user_id and c.post_id = p.post_id and c.post_id = ${id}ORDER BY votes DESC`;
 					db.query(sql,(err,comments)=>{
 							if(err){
 								res.status(500).json(err);

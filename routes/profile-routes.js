@@ -19,6 +19,20 @@ router.get('/lead',(req,res)=>{
             for(var i = 0;i<lead.length;i++){
                 lead[i]['Points'] = (lead[i].total_comments)*3 + (lead[i].total_posts)*5;
             }
+            function compare(a, b) {
+                // Use toUpperCase() to ignore character casing
+                const A = a.Points;
+                const B = b.Points;
+              
+                let comparison = 0;
+                if ( A < B ) {
+                  comparison = 1;
+                } else if (A > B) {
+                  comparison = -1;
+                }
+                return comparison;
+              }
+            lead.sort(compare);
             res.json(lead);
         }
     });
