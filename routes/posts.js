@@ -29,34 +29,43 @@ router.post('/', (req, res) => {
 		 var overview= req.body.overview;
 		 var body= req.body.body;
 		 //var votes= parseInt(post.votes);
-		 if (!req.files)
-				return res.status(400).json({err:"Bad Request!!",message:'No files were uploaded.'});
-
-				var file = req.files.image;
-				var img_name=file.name;
-				
-				if(file.mimetype == "image/jpeg" ||file.mimetype == "image/png"||file.mimetype == "image/gif" )
-				  {
-						if(file.size < 1572864 ){
-							var newPost = {user_id:user_id,title:title,overview:overview,body:body,image:img_name,votes:0};                  
-							file.mv('public/images/uploads/'+file.name, (err) => {			 
-								if (err) return res.status(500).json(err);
-								var sql = "INSERT INTO posts SET ?";                  
-							db.query(sql, newPost, (error, result)=> {
-									if(error){
-										res.status(500).json(err);
-										throw error;
-									}
-									res.status(201).json({message:"Post added!"});
-								});
-						 });
-						}else{
-							res.status(400).json({err:"Bad Request!!",message:"File should be less than 1.5MB!!"});
-						}
-			} else {
-				//res.render('/posts/new',{message: message});
-				res.status(400).json({err:"Bad Request!!",message:"This format is not allowed , please upload file with '.png','.gif','.jpg"});
-			}
+		 if(!req.files){
+			var newPost = {user_id:user_id,title:title,overview:overview,body:body,votes:0};
+			var sql = "INSERT INTO posts SET ?";                  
+			db.query(sql, newPost, (error, result)=> {
+					if(error){
+						res.status(500).json(err);
+						throw error;
+					}
+					 res.status(201).json({message:"Post Added"})
+				});
+		}else{
+			var file = req.files.image;
+			var img_name=file.name;
+			
+			if(file.mimetype == "image/jpeg" ||file.mimetype == "image/png"||file.mimetype == "image/gif" )
+				{
+					if(file.size < 1572864 ){
+						var newPost = {user_id:user_id,title:title,overview:overview,body:body,image:img_name,votes:0};                  
+						file.mv('public/images/uploads/'+file.name, (err) => {			 
+							if (err) return res.status(500).json(err);
+							var sql = "INSERT INTO posts SET ?";                  
+						db.query(sql, newPost, (error, result)=> {
+								if(error){
+									res.status(500).json(err);
+									throw error;
+								}
+								res.status(201).json({message:"Post added!"});
+							});
+					 });
+					}else{
+						res.status(400).json({err:"Bad Request!!",message:"File should be less than 1.5MB!!"});
+					}
+				} else {
+					//res.render('/posts/new',{message: message});
+					res.status(400).json({err:"Bad Request!!",message:"This format is not allowed , please upload file with '.png','.gif','.jpg"});
+				}
+		}
 	}
 });
 
