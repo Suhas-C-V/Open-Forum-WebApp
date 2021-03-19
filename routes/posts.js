@@ -47,18 +47,6 @@ var database = new Database({
 	timezone:"Asia/kolkata"
 });
 
-// function getColour( posts, callback)
-// {	
-//     db.query( `SELECT * FROM posts_votes WHERE user_id = ${posts.user_id} and post_id = ${posts.post_id}` , (err, result) =>
-//     {
-//         if (err) 
-//             callback(err,null);
-//         else
-//             callback(null,result[0].hexcode);
-//     });
-
-// }
-
 //INDEX - show all posts
 router.get('/', (req, res) => {
 	// Get all posts from DB
@@ -128,11 +116,11 @@ router.get('/log/:user_id', (req, res) => {
 
 
 //CREATE - add new post
-router.post('/', (req, res) => {
+router.post('/', middleware.isLoggedIn , (req, res) => {
 	if(req.method == "POST"){
 		 //var user_id = req.user.user_id;
 		 //var user_id = parseInt(req.body.user_id);
-		 var user_id = parseInt(req.body.user_id);
+		 var user_id = parseInt(req.session.user_id);
 		 console.log(req.body);
 		 var title= req.body.title;
 		 var overview= req.body.overview;

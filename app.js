@@ -67,14 +67,19 @@ app.use(fileUpload());
 
 const secrectkey = process.env.SECRET || keys.session.cookieKey;
 
-app.use(session({
+var sess = {
     secret: secrectkey,
     resave: true,
     saveUninitialized: true,
-    cookie:{
-        maxAge: 1000*60*60*24
-    }
-}));
+    cookie:{}
+};
+
+if (process.env.NODE_ENV === 'production') {
+  app.set('trust proxy', 1) // trust first proxy
+  sess.cookie.secure = true // serve secure cookies
+}
+
+app.use(session(sess));
 
 app.use(function(req, res, next) {
 	res.locals.currentUser = req.session.user_id;
