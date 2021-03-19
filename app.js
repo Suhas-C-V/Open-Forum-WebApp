@@ -11,8 +11,6 @@ if(process.env.NODE_ENV === 'development'){
   keys = require('./config/keys');
 }
 console.log(process.env.NODE_ENV);
-
-const cors = require('cors');
 const mysql = require('mysql');
 var session = require('express-session')
 const bodyParser = require('body-parser');
