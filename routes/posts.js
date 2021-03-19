@@ -4,6 +4,17 @@ const { json } = require('body-parser');
 const db = require('../config/db');
 const middleware = require('../middleware');
 
+function getColour( posts, callback)
+{	
+    db.query( `SELECT * FROM posts_votes WHERE user_id = ${posts.user_id} and post_id = ${posts.post_id}` , (err, result) =>
+    {
+        if (err) 
+            callback(err,null);
+        else
+            callback(null,result[0].hexcode);
+    });
+
+}
 //INDEX - show all posts
 router.get('/', (req, res) => {
 	// Get all posts from DB
@@ -17,6 +28,34 @@ router.get('/', (req, res) => {
       res.json(data);
   });
 });
+
+router.get('/log/:user_id', (req, res) => {
+	// Get all posts from DB
+	let user_id = req.params.user_id;
+	let sql = 'SELECT p.*,u.name FROM posts p,users u WHERE u.user_id = p.user_id ORDER BY p.votes DESC';
+  db.query(sql, (err,posts)=>{
+      if(err){
+				res.status(500).json(err);
+				throw err;
+			}
+      var data = JSON.parse(JSON.stringify(posts));
+			
+			data.forEach(element => {
+				db.query(`SELECT * FROM post_votes WHERE user_id = ${user_id} and post_id = ${element.post_id}`,(err,postv)=>{
+					console.log(postv);
+					if(postv.length === 0){
+						element.voted = 0;
+					}else{
+						element.voted = 1;
+					}
+					da.push(element);
+			});
+			});
+      res.json(da);
+  });
+});
+
+
 
 //CREATE - add new post
 router.post('/', (req, res) => {
@@ -108,7 +147,7 @@ router.get('/:id/:user_id', (req, res) => {
 });
 
 // EDIT post form
-router.get('/:id/edit', middleware.checkPostOwner ,(req, res) => {
+router.get('/:id/edit', (req, res) => {
 		let id = req.params.id;
 		let sql = `SELECT * FROM posts WHERE post_id = ${id}`;
 		db.query(sql,(err,post)=>{
@@ -124,7 +163,7 @@ router.get('/:id/edit', middleware.checkPostOwner ,(req, res) => {
 });
 
 // UPDATE POST ROUTE
-router.put('/:id',middleware.checkPostOwner,(req, res) => {
+router.put('/:id',(req, res) => {
 		let id = req.params.id;
 		let sql = `SELECT * FROM posts WHERE post_id = ${id}`;
 		db.query(sql,(err,post)=>{
@@ -147,7 +186,7 @@ router.put('/:id',middleware.checkPostOwner,(req, res) => {
 });
 
 //DELETE a perticular post
-router.delete('/:id', middleware.checkPostOwner ,(req, res) => {
+router.delete('/:id',(req, res) => {
 	let id = req.params.id;
 	let sql = `SELECT * FROM posts WHERE post_id = ${id}`;
 	db.query(sql,(err,post)=>{
