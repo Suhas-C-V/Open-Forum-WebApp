@@ -260,7 +260,7 @@ router.delete('/:id',(req, res) => {
 					res.status(500).json(err);
 					throw err;
 				} 
-				res.status(410).json({message:"Post Deleted!"});
+				res.status(200).json({message:"Post Deleted!"});
 			});
 		}
 	});

@@ -108,7 +108,7 @@ router.delete('/:comment_id',middleware.checkCommentOwner,(req,res)=>{
             res.status(500).send(err);
             throw err;
           }else{
-            res.status(410);
+            res.status(200);
             res.json({"message": "Comment Deleted"});
           }
       });

@@ -56,4 +56,70 @@ router.post('/comments',(req,res)=>{
   });
 });
 
+router.post('/down/posts',(req,res)=>{
+  var user_id = parseInt(req.body.user_id);
+  let post_id = parseInt(req.body.post_id);
+  db.query(`SELECT * FROM post_votes WHERE post_id = ${post_id} and user_id = ${user_id}`,(err,data)=>{
+      if(err) throw err;
+      else if(data.length === 0){
+        db.query(`SELECT post_id,votes FROM posts WHERE post_id = ${post_id}`,(err,data)=>{
+          if(err) throw err;
+          else if(data.length == 0 ){
+            res.json({message: "Post not Found!!"});
+          }else{
+            res.status(201).json(data[0]);
+          }
+        });
+      } else {
+          db.query(`DELETE FROM post_votes WHERE post_id = ${post_id} and user_id = ${user_id}`,(err,result)=>{
+             if(err){
+               throw err;
+             }    
+          });
+          db.query(`UPDATE posts SET votes = votes - 1 WHERE post_id = ${post_id}`,(err,result)=>{
+            if(err){
+              throw err;
+            }    
+         });
+         db.query(`SELECT post_id,votes FROM posts WHERE post_id = ${post_id}`,(err,data)=>{
+          if(err) throw err;
+          res.status(201).json(data[0]);
+        });
+      }  
+  });
+});
+
+router.post('/down/comments',(req,res)=>{
+  var user_id = parseInt(req.body.user_id);
+  let com_id = parseInt(req.body.com_id);
+  db.query(`SELECT * FROM comment_votes WHERE com_id = ${com_id} and user_id = ${user_id}`,(err,data)=>{
+      if(err) throw err;
+      else if(data.length === 0){
+        db.query(`SELECT com_id,votes FROM comments WHERE com_id = ${com_id}`,(err,data)=>{
+          if(err) throw err;
+          else if(data.length == 0 ){
+            res.json({message: "Comment not Found!!"});
+          }else{
+            res.status(201).json(data[0]);
+          }
+        });
+      } else {
+          db.query(`DELETE FROM comment_votes WHERE com_id = ${com_id} and user_id = ${user_id}`,(err,result)=>{
+             if(err){
+               throw err;
+             }    
+          });
+          db.query(`UPDATE comments SET votes = votes - 1 WHERE com_id = ${com_id}`,(err,result)=>{
+            if(err){
+              throw err;
+            }    
+         });
+         db.query(`SELECT com_id,votes FROM comments WHERE com_id = ${com_id}`,(err,data)=>{
+          if(err) throw err;
+          res.status(201).json(data[0]);
+        });
+      }  
+  });
+});
+
 module.exports = router;
