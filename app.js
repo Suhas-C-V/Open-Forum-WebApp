@@ -16,7 +16,8 @@ const cors = require('cors');
 const mysql = require('mysql');
 var session = require('express-session')
 const bodyParser = require('body-parser');
-const fileUpload = require('express-fileupload')
+const fileUpload = require('express-fileupload');
+var MySQLStore = require('express-mysql-session')(session);
 const app = express();
 
 let port = process.env.PORT || 5000;
@@ -65,23 +66,49 @@ app.set('view engine','ejs');
 app.use(express.static(__dirname + '/public'));
 app.use(fileUpload());
 
+var sessionStore = new MySQLStore({
+  host: host,
+  user: user,
+  password: password,
+  database:'openforum',
+  port:'3306',
+  clearExpired: true,
+	checkExpirationInterval: 900000,
+	expiration: 86400000,
+	createDatabaseTable: true,
+	connectionLimit: 5,
+	endConnectionOnClose: true,
+	schema: {
+		tableName: 'sessions',
+		columnNames: {
+			session_id: 'session_id',
+			expires: 'expires',
+			data: 'data'
+		}
+	}
+}, connection);
+
 const secrectkey = process.env.SECRET || keys.session.cookieKey;
 
 var sess = {
     secret: secrectkey,
     resave: true,
     saveUninitialized: true,
+    store: sessionStore,
     cookie:{}
 };
 
-if (process.env.NODE_ENV === 'production') {
-  app.set('trust proxy', 1) // trust first proxy
-  sess.cookie.secure = true // serve secure cookies
-}
+// if (process.env.NODE_ENV === 'production') {
+//   app.set('trust proxy', 1) // trust first proxy
+//   sess.cookie.secure = true // serve secure cookies
+// }
+
 
 sess.cookie.secure = true;
 app.set('trust proxy', 1);
 app.use(session(sess));
+
+global.store = sessionStore;
 
 app.use(function(req, res, next) {
 	res.locals.currentUser = req.session.user_id;
