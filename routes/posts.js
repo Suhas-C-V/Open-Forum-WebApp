@@ -116,7 +116,7 @@ router.get('/log/:user_id', (req, res) => {
 									return element;
 								}).then (ele=>{
 									da.push(ele);
-									console.log(da);
+									//console.log(da);
 									if( da.length === len ){
 										res.json(da);
 									}
