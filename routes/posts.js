@@ -4,17 +4,61 @@ const { json } = require('body-parser');
 const db = require('../config/db');
 const middleware = require('../middleware');
 
-function getColour( posts, callback)
-{	
-    db.query( `SELECT * FROM posts_votes WHERE user_id = ${posts.user_id} and post_id = ${posts.post_id}` , (err, result) =>
-    {
-        if (err) 
-            callback(err,null);
-        else
-            callback(null,result[0].hexcode);
-    });
-
+var keys;
+if(process.env.NODE_ENV === 'development'){
+  keys = require('../config/keys');
 }
+
+const mysql = require( 'mysql' );
+let host = process.env.HOST || keys.db_config.host;
+let user = process.env.USER || keys.db_config.user;
+let password = process.env.PASSWORD || keys.db_config.password;
+
+class Database {
+	constructor( config ) {
+			this.connection = mysql.createConnection( config );
+	}
+	query( sql, args ) {
+			return new Promise( ( resolve, reject ) => {
+					this.connection.query( sql, args, ( err, rows ) => {
+							if ( err )
+									return reject( err );
+							resolve( rows );
+					} );
+			} );
+	}
+	close() {
+			return new Promise( ( resolve, reject ) => {
+					this.connection.end( err => {
+							if ( err )
+									return reject( err );
+							resolve();
+					} );
+			} );
+	}
+}
+
+var database = new Database({
+	host: host,
+	user: user,
+	password: password,
+	database:'openforum',
+	port:'3306',
+	timezone:"Asia/kolkata"
+});
+
+// function getColour( posts, callback)
+// {	
+//     db.query( `SELECT * FROM posts_votes WHERE user_id = ${posts.user_id} and post_id = ${posts.post_id}` , (err, result) =>
+//     {
+//         if (err) 
+//             callback(err,null);
+//         else
+//             callback(null,result[0].hexcode);
+//     });
+
+// }
+
 //INDEX - show all posts
 router.get('/', (req, res) => {
 	// Get all posts from DB
@@ -32,27 +76,53 @@ router.get('/', (req, res) => {
 router.get('/log/:user_id', (req, res) => {
 	// Get all posts from DB
 	let user_id = req.params.user_id;
-	let sql = 'SELECT p.*,u.name FROM posts p,users u WHERE u.user_id = p.user_id ORDER BY p.votes DESC';
-  db.query(sql, (err,posts)=>{
-      if(err){
-				res.status(500).json(err);
-				throw err;
-			}
-      var data = JSON.parse(JSON.stringify(posts));
-			
-			data.forEach(element => {
-				db.query(`SELECT * FROM post_votes WHERE user_id = ${user_id} and post_id = ${element.post_id}`,(err,postv)=>{
-					console.log(postv);
-					if(postv.length === 0){
-						element.voted = 0;
-					}else{
-						element.voted = 1;
-					}
-					da.push(element);
-			});
-			});
-      res.json(da);
-  });
+	// let sql = 'SELECT p.*,u.name FROM posts p,users u WHERE u.user_id = p.user_id ORDER BY p.votes DESC';
+  // db.query(sql, (err,posts)=>{
+  //     if(err){
+	// 			res.status(500).json(err);
+	// 			throw err;
+	// 		}
+  //     var data = JSON.parse(JSON.stringify(posts));
+	// 		//global.votes = [];
+	// 		data.forEach(element => {
+	// 			db.query(`SELECT * FROM post_votes WHERE user_id = ${user_id} and post_id = ${element.post_id}`,(err,postv)=>{
+	// 				console.log(postv);
+	// 				if(postv.length === 0){
+	// 					element.voted = 0;
+	// 				}else{
+	// 					element.voted = 1;
+	// 				}
+	// 				console.log(element);
+	// 		});
+	// 		});
+  //     res.json(data);
+  // });
+
+	var someRows;
+	var da = [];
+	database.query( 'SELECT p.*,u.name FROM posts p,users u WHERE u.user_id = p.user_id ORDER BY p.votes DESC' )
+    .then( rows => {
+        someRows = JSON.parse(JSON.stringify(rows));
+				var len = someRows.length;
+				//console.log(someRows);
+				someRows.forEach(element => {
+								database.query(`SELECT * FROM post_votes WHERE user_id = ${user_id} and post_id = ${element.post_id}`)
+								.then(row =>{
+									if(row.length === 0){
+											element.voted = 0;
+									}else{
+											element.voted = 1;
+									}
+									return element;
+								}).then (ele=>{
+									da.push(ele);
+									console.log(da);
+									if( da.length === len ){
+										res.json(da);
+									}
+								})
+							});
+    	});
 });
 
 
