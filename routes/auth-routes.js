@@ -7,7 +7,7 @@ if(process.env.NODE_ENV === 'development'){
 
 const {OAuth2Client} = require('google-auth-library');
 
-router.post('/login',(req,res)=>{
+router.get('/login',(req,res)=>{
   var CLIENT_ID_1 = process.env.CLIENT_ID_1 || keys.google.CLIENT_ID_1;
   var CLIENT_ID_2 = process.env.CLIENT_ID_2 || keys.google.CLIENT_ID_2;
   var CLIENT_ID = process.env.CLIENT_ID || keys.google.CLIENT_ID;
