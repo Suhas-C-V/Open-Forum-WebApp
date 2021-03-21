@@ -6,6 +6,7 @@ const profileRoutes = require('./routes/profile-routes');
 const postRoutes = require('./routes/posts');
 const commentRoutes = require('./routes/comments');
 const voteRoutes = require('./routes/votes');
+
 var keys;
 if(process.env.NODE_ENV === 'development'){
   keys = require('./config/keys');
@@ -58,8 +59,6 @@ handleDisconnect();
 //set up view engine
 app.use(express.json());
 app.use(bodyParser.urlencoded({ extended: true }));
-app.set('views', __dirname + '/views');
-app.set('view engine','ejs');
 app.use(express.static(__dirname + '/public'));
 app.use(fileUpload());
 
@@ -74,10 +73,10 @@ app.use(session({
     }
 }));
 
-app.use(function(req, res, next) {
-	res.locals.currentUser = req.session.user_id;
-	next();
-});
+// app.use(function(req, res, next) {
+// 	res.locals.currentUser = req.session.user_id;
+// 	next();
+// });
 
 app.use((req,res,next)=>{
     res.header("Access-Control-Allow-Origin","*");

@@ -116,7 +116,7 @@ router.get('/log/:user_id', (req, res) => {
 
 
 //CREATE - add new post
-router.post('/', (req, res) => {
+router.post('/', middleware.verifyUser, (req, res) => {
 	if(req.method == "POST"){
 		 //var user_id = req.user.user_id;
 		 //var user_id = parseInt(req.body.user_id);
