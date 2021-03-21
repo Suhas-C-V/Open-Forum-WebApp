@@ -61,7 +61,7 @@ router.get('/', (req, res) => {
   });
 });
 
-router.get('/log/:user_id', (req, res) => {
+router.get('/log/:user_id',middleware.verifyUser, (req, res) => {
 	// Get all posts from DB
 	let user_id = req.params.user_id;
 	// let sql = 'SELECT p.*,u.name FROM posts p,users u WHERE u.user_id = p.user_id ORDER BY p.votes DESC';
@@ -167,7 +167,7 @@ router.post('/', middleware.verifyUser, (req, res) => {
 });
 
 // SHOW - shows more info about one post
-router.get('/:id/:user_id', (req, res) => {
+router.get('/:id/:user_id',middleware.verifyUser, (req, res) => {
 		let id = req.params.id;
 		let user_id = req.params.user_id;
 		let result = {};
@@ -205,7 +205,7 @@ router.get('/:id/:user_id', (req, res) => {
 });
 
 // EDIT post form
-router.get('/:id/edit', (req, res) => {
+router.get('/:id/edit',middleware.verifyUser, (req, res) => {
 		let id = req.params.id;
 		let sql = `SELECT * FROM posts WHERE post_id = ${id}`;
 		db.query(sql,(err,post)=>{
@@ -221,7 +221,7 @@ router.get('/:id/edit', (req, res) => {
 });
 
 // UPDATE POST ROUTE
-router.put('/:id',(req, res) => {
+router.put('/:id',middleware.verifyUser,(req, res) => {
 		let id = req.params.id;
 		let sql = `SELECT * FROM posts WHERE post_id = ${id}`;
 		db.query(sql,(err,post)=>{
@@ -244,7 +244,7 @@ router.put('/:id',(req, res) => {
 });
 
 //DELETE a perticular post
-router.delete('/:id',(req, res) => {
+router.delete('/:id',middleware.verifyUser,(req, res) => {
 	let id = req.params.id;
 	let sql = `SELECT * FROM posts WHERE post_id = ${id}`;
 	db.query(sql,(err,post)=>{
